@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio PLN y GPT-3</title>
+<style>
+  :root { --primario:#3b2a8c; --oscuro:#1b1446; --acento:#00b3a4; --rosa:#e8578a; --amarillo:#f5b82e; --texto:#1f2330; --suave:#f3f2fb; --borde:#d9d6ee; --verde:#1f9d6b; --rojo:#d64545; }
+  * { box-sizing:border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color:var(--texto); line-height:1.6; margin:0; background:#fff; }
+  main { max-width:1000px; margin:0 auto; padding:0 16px 48px; }
+  section { padding:40px 0; border-bottom:1px solid var(--borde); }
+  h1,h2,h3 { color:var(--primario); line-height:1.25; }
+  h2 { font-size:1.7rem; display:flex; align-items:center; gap:12px; }
+  h2 .num { background:var(--primario); color:#fff; border-radius:50%; width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+  h3 { font-size:1.2rem; margin-top:28px; }
+  p { text-align:justify; }
+  svg { max-width:100%; height:auto; }
+
+  /* Portada */
+  .portada { background:linear-gradient(135deg,var(--primario),var(--oscuro)); color:#fff; padding:48px 16px 56px; text-align:center; border-radius:0 0 32px 32px; }
+  .portada h1 { color:#fff; font-size:2.3rem; margin:12px auto 8px; max-width:800px; }
+  .portada p { text-align:center; margin:4px 0; opacity:.92; }
+  .portada .etiqueta { display:inline-block; background:var(--acento); color:#fff; padding:4px 14px; border-radius:20px; font-size:.85rem; font-weight:bold; letter-spacing:.5px; }
+
+  /* Índice */
+  .indice { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; list-style:none; padding:0; }
+  .indice a { display:flex; gap:10px; align-items:center; background:var(--suave); border-radius:12px; padding:12px 14px; color:var(--primario); text-decoration:none; font-weight:bold; border:1px solid var(--borde); }
+  .indice a:hover { background:var(--primario); color:#fff; }
+  .indice b { background:var(--acento); color:#fff; border-radius:8px; padding:2px 8px; font-size:.85rem; }
+
+  /* Tarjetas genéricas */
+  .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+  .card { background:#fff; border:1px solid var(--borde); border-radius:16px; padding:18px; box-shadow:0 4px 14px rgba(59,42,140,.08); }
+  .card h3 { margin:8px 0 6px; font-size:1.05rem; }
+  .card p { font-size:.93rem; text-align:left; margin:6px 0; }
+  .icono { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .icono svg { width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .c1{background:var(--primario)} .c2{background:var(--acento)} .c3{background:var(--rosa)} .c4{background:var(--amarillo)}
+  .chip { display:inline-block; font-size:.75rem; font-weight:bold; padding:2px 10px; border-radius:20px; background:var(--suave); color:var(--primario); margin-top:4px; }
+
+  .tarjeta { background:var(--suave); border-left:5px solid var(--acento); padding:14px 18px; margin:20px 0; border-radius:10px; }
+  .tarjeta.alerta { border-left-color:var(--rosa); }
+
+  /* Cifras */
+  .cifras { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:20px 0; }
+  .cifra { background:linear-gradient(135deg,var(--primario),var(--oscuro)); color:#fff; border-radius:16px; padding:18px 12px; text-align:center; }
+  .cifra strong { display:block; font-size:1.8rem; color:var(--amarillo); }
+  .cifra span { font-size:.85rem; opacity:.9; }
+
+  /* Línea de tiempo */
+  .timeline { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; position:relative; margin-top:16px; }
+  .hito { background:#fff; border:1px solid var(--borde); border-top:6px solid var(--acento); border-radius:14px; padding:16px; }
+  .hito:nth-child(2){border-top-color:var(--amarillo)} .hito:nth-child(3){border-top-color:var(--rosa)} .hito:nth-child(4){border-top-color:var(--primario)}
+  .hito .anio { font-weight:bold; color:var(--primario); font-size:1.1rem; }
+  .hito p { font-size:.9rem; text-align:left; margin:6px 0 0; }
+
+  /* Figuras */
+  figure { margin:24px 0; background:var(--suave); border-radius:16px; padding:16px; text-align:center; }
+  figcaption { font-size:.88rem; color:#555; margin-top:8px; }
+
+  /* Tablas */
+  .tabla { width:100%; border-collapse:collapse; margin:16px 0; font-size:.95rem; }
+  .tabla th,.tabla td { border:1px solid var(--borde); padding:8px 10px; vertical-align:top; text-align:left; }
+  .tabla th { background:var(--primario); color:#fff; }
+  .scroll { overflow-x:auto; }
+
+  /* Preguntas */
+  .pregunta { position:relative; padding-top:26px; }
+  .pregunta .n { position:absolute; top:-14px; left:18px; background:var(--rosa); color:#fff; font-weight:bold; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .pregunta blockquote { margin:6px 0; font-style:italic; color:var(--oscuro); font-size:1rem; }
+  .tipo-a { background:#fde8ef; color:#a3204f; } .tipo-b { background:#e3f6f4; color:#00756b; }
+
+  .evidencia { border:2px dashed var(--acento); padding:28px 12px; border-radius:12px; color:#666; font-style:italic; text-align:center; background:#fafafe; }
+
+  /* Ventajas / desventajas */
+  .vd h3 { display:flex; gap:10px; align-items:center; margin-top:0; }
+  .vd ul { list-style:none; padding:0; margin:8px 0; }
+  .vd li { padding:5px 0 5px 28px; position:relative; font-size:.92rem; }
+  .vd .pro li::before { content:"✓"; position:absolute; left:4px; color:var(--verde); font-weight:bold; }
+  .vd .contra li::before { content:"✗"; position:absolute; left:4px; color:var(--rojo); font-weight:bold; }
+  .vd .sub { font-weight:bold; font-size:.85rem; text-transform:uppercase; letter-spacing:.5px; margin-top:10px; }
+  .vd .sub.pro { color:var(--verde); } .vd .sub.contra { color:var(--rojo); }
+
+  .referencias p { padding-left:36px; text-indent:-36px; text-align:left; }
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTADA ===================== -->
+<header class="portada" id="portada">
+  <svg viewBox="0 0 420 220" width="420" role="img" aria-label="Ilustración de una red neuronal que conversa">
+    <!-- red neuronal -->
+    <g stroke="#7f73c9" stroke-width="1.2" opacity=".8">
+      <line x1="60" y1="50" x2="150" y2="40"/><line x1="60" y1="50" x2="150" y2="110"/><line x1="60" y1="50" x2="150" y2="180"/>
+      <line x1="60" y1="110" x2="150" y2="40"/><line x1="60" y1="110" x2="150" y2="110"/><line x1="60" y1="110" x2="150" y2="180"/>
+      <line x1="60" y1="170" x2="150" y2="40"/><line x1="60" y1="170" x2="150" y2="110"/><line x1="60" y1="170" x2="150" y2="180"/>
+      <line x1="150" y1="40" x2="240" y2="75"/><line x1="150" y1="40" x2="240" y2="145"/>
+      <line x1="150" y1="110" x2="240" y2="75"/><line x1="150" y1="110" x2="240" y2="145"/>
+      <line x1="150" y1="180" x2="240" y2="75"/><line x1="150" y1="180" x2="240" y2="145"/>
+    </g>
+    <g>
+      <circle cx="60" cy="50" r="12" fill="#00b3a4"/><circle cx="60" cy="110" r="12" fill="#00b3a4"/><circle cx="60" cy="170" r="12" fill="#00b3a4"/>
+      <circle cx="150" cy="40" r="12" fill="#f5b82e"/><circle cx="150" cy="110" r="12" fill="#f5b82e"/><circle cx="150" cy="180" r="12" fill="#f5b82e"/>
+      <circle cx="240" cy="75" r="12" fill="#e8578a"/><circle cx="240" cy="145" r="12" fill="#e8578a"/>
+    </g>
+    <!-- burbujas de chat -->
+    <rect x="270" y="30" width="130" height="56" rx="14" fill="#ffffff"/>
+    <polygon points="282,86 300,86 278,102" fill="#ffffff"/>
+    <text x="335" y="55" font-family="Arial" font-size="13" fill="#3b2a8c" text-anchor="middle" font-weight="bold">¿Qué es el</text>
+    <text x="335" y="73" font-family="Arial" font-size="13" fill="#3b2a8c" text-anchor="middle" font-weight="bold">lenguaje?</text>
+    <rect x="280" y="118" width="130" height="56" rx="14" fill="#00b3a4"/>
+    <polygon points="396,174 378,174 404,190" fill="#00b3a4"/>
+    <circle cx="315" cy="146" r="5" fill="#fff"/><circle cx="345" cy="146" r="5" fill="#fff"/><circle cx="375" cy="146" r="5" fill="#fff"/>
+  </svg>
+  <div><span class="etiqueta">PORTAFOLIO DE EVIDENCIAS</span></div>
+  <h1>Aplicaciones modernas del Procesamiento de Lenguaje Natural</h1>
+  <p><strong>Análisis de la herramienta GPT-3: funcionamiento, usos y límites</strong></p>
+  <p style="margin-top:16px">
+Harold Humberto Alzate Ayala
+</p>
+ <p style="margin-top:16px" >
+Eduardo Andres Cañola Sotelo
+</p>
+ <p style="margin-top:16px">
+
+Ricardo Arturo Salamanca Mora
+</p>
+  <p>Procesamiento de Lenguaje Natural · Semana 08 · Docente: Nathalia Orozco Morales</p>
+  <p> Corporación Universitaria Minuto de Dios -UNIMINUTO · 16 octubre 2026</p>
+</header>
+
+<main>
+
+<!-- ===================== TABLA DE CONTENIDO ===================== -->
+<section id="contenido-indice">
+  <h2>Tabla de contenido</h2>
+  <ol class="indice">
+    <li><a href="#introduccion"><b>1</b> Introducción</a></li>
+    <li><a href="#fundamentos"><b>2</b> Fundamentos del PLN</a></li>
+    <li><a href="#aplicaciones"><b>3</b> Aplicaciones empresariales</a></li>
+    <li><a href="#gpt3"><b>4</b> La herramienta GPT-3</a></li>
+    <li><a href="#modelos"><b>5</b> Modelos que la hacen funcional</a></li>
+    <li><a href="#experimento"><b>6</b> Experimento: 5 preguntas</a></li>
+    <li><a href="#reacciones"><b>7</b> Reacciones y análisis</a></li>
+    <li><a href="#ventajas"><b>8</b> Ventajas y desventajas</a></li>
+    <li><a href="#conclusiones"><b>9</b> Conclusiones</a></li>
+    <li><a href="#referencias"><b>10</b> Referencias</a></li>
+  </ol>
+</section>
+
+<!-- ===================== 1. INTRODUCCIÓN ===================== -->
+<section id="introduccion">
+  <h2><span class="num">1</span> Introducción</h2>
+  <p>El Procesamiento de Lenguaje Natural (PLN, o NLP por sus siglas en inglés) es la rama de la inteligencia artificial que permite a las máquinas comprender, interpretar y generar lenguaje humano. En la última década, gracias al aprendizaje profundo (<em>deep learning</em>) y en particular a la arquitectura Transformer (Vaswani et al., 2017), el PLN pasó de ser una disciplina de laboratorio a convertirse en una tecnología presente en la vida diaria de las organizaciones: asistentes virtuales, traductores automáticos, sistemas de análisis de opiniones y modelos generativos como GPT-3.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="icono c1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></div>
+      <h3>¿Cuál es el propósito del portafolio?</h3>
+      <p>Reunir, de forma organizada y secuencial, las evidencias construidas por el equipo sobre las aplicaciones modernas del PLN en entornos empresariales. Busca documentar qué son estas aplicaciones, cómo funcionan y qué técnicas de <em>deep learning</em> las hacen posibles. Además, pone a prueba la herramienta GPT-3 con preguntas ambiguas o con premisas fuera del plano histórico, para observar sus reacciones y reconocer sus alcances y límites.</p>
+    </div>
+    <div class="card">
+      <div class="icono c2"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8z"/></svg></div>
+      <h3>¿Cuál es su importancia?</h3>
+      <p>Permite pasar de la teoría a la experiencia directa. No basta con saber que un modelo de lenguaje “responde preguntas”: hay que entender por qué a veces afirma con seguridad algo falso, cómo interpreta el contexto y qué riesgos y oportunidades trae para las empresas en fraude, análisis de información y automatización. Este análisis crítico es esencial para que, como futuros profesionales, decidamos de forma informada sobre la adopción responsable de la inteligencia artificial.</p>
+    </div>
+  </div>
+
+  <p>Los aspectos más relevantes que se desarrollan son: los fundamentos del PLN, diez aplicaciones empresariales con sus funcionalidades, el funcionamiento interno de GPT-3 (Brown et al., 2020), los modelos que lo soportan, el experimento con cinco preguntas y un balance de ventajas y desventajas frente al fraude, el análisis de contexto y el reemplazo de funciones empresariales.</p>
+</section>
+
+<!-- ===================== 2. FUNDAMENTOS ===================== -->
+<section id="fundamentos">
+  <h2><span class="num">2</span> Fundamentos del Procesamiento de Lenguaje Natural</h2>
+  <p>El PLN combina lingüística computacional, estadística y aprendizaje automático. Según Jurafsky y Martin (2024), sus tareas se pueden agrupar en dos grandes familias: la <strong>comprensión del lenguaje natural</strong> (NLU), que busca extraer significado de un texto, y la <strong>generación de lenguaje natural</strong> (NLG), que busca producir texto coherente.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 210" width="760" role="img" aria-label="Diagrama: el PLN se divide en comprensión y generación">
+      <rect x="290" y="12" width="180" height="56" rx="14" fill="#3b2a8c"/>
+      <text x="380" y="38" font-family="Arial" font-size="16" fill="#fff" text-anchor="middle" font-weight="bold">PLN</text>
+      <text x="380" y="57" font-family="Arial" font-size="11" fill="#e3e0f7" text-anchor="middle">Lenguaje humano ⇄ máquina</text>
+      <path d="M380 68 V90 H180 V112 M380 90 H580 V112" stroke="#9a92d1" stroke-width="2" fill="none"/>
+      <rect x="40" y="112" width="280" height="84" rx="14" fill="#00b3a4"/>
+      <text x="180" y="138" font-family="Arial" font-size="15" fill="#fff" text-anchor="middle" font-weight="bold">Comprensión (NLU)</text>
+      <text x="180" y="160" font-family="Arial" font-size="12" fill="#fff" text-anchor="middle">Texto → significado</text>
+      <text x="180" y="180" font-family="Arial" font-size="11" fill="#eafaf8" text-anchor="middle">sentimientos · entidades · intenciones</text>
+      <rect x="440" y="112" width="280" height="84" rx="14" fill="#e8578a"/>
+      <text x="580" y="138" font-family="Arial" font-size="15" fill="#fff" text-anchor="middle" font-weight="bold">Generación (NLG)</text>
+      <text x="580" y="160" font-family="Arial" font-size="12" fill="#fff" text-anchor="middle">Significado → texto</text>
+      <text x="580" y="180" font-family="Arial" font-size="11" fill="#fdeef3" text-anchor="middle">resúmenes · traducción · chatbots</text>
+    </svg>
+    <figcaption>Figura 1. Las dos grandes familias de tareas del PLN. Elaboración propia.</figcaption>
+  </figure>
+
+  <h3>2.1 Evolución del PLN</h3>
+  <div class="timeline">
+    <div class="hito"><div class="anio">1950 – 1980</div><strong>Basado en reglas</strong><p>Gramáticas y diccionarios escritos a mano por expertos. Rígidos y difíciles de escalar.</p></div>
+    <div class="hito"><div class="anio">1990 – 2010</div><strong>Estadístico</strong><p>Modelos de n-gramas, modelos ocultos de Márkov y clasificadores que aprenden de grandes corpus.</p></div>
+    <div class="hito"><div class="anio">2013 – 2017</div><strong>Redes neuronales</strong><p>Palabras como vectores (<em>word embeddings</em>, Word2Vec) y redes recurrentes (RNN, LSTM).</p></div>
+    <div class="hito"><div class="anio">2017 – hoy</div><strong>Transformers y LLM</strong><p>Atención, preentrenamiento masivo y ajuste fino: BERT, GPT-3, ChatGPT y sucesores.</p></div>
+  </div>
+
+  <h3>2.2 Tareas básicas del PLN</h3>
+  <figure>
+    <svg viewBox="0 0 760 170" width="760" role="img" aria-label="Ejemplo de análisis de una oración">
+      <text x="20" y="28" font-family="Arial" font-size="13" fill="#3b2a8c" font-weight="bold">Oración: “Bancolombia abrió una oficina en Palmira en 2023”</text>
+      <g font-family="Arial" font-size="13" text-anchor="middle">
+        <rect x="20" y="48" width="118" height="34" rx="8" fill="#3b2a8c"/><text x="79" y="70" fill="#fff">Bancolombia</text>
+        <rect x="146" y="48" width="72" height="34" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="182" y="70" fill="#1f2330">abrió</text>
+        <rect x="226" y="48" width="56" height="34" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="254" y="70" fill="#1f2330">una</text>
+        <rect x="290" y="48" width="82" height="34" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="331" y="70" fill="#1f2330">oficina</text>
+        <rect x="380" y="48" width="40" height="34" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="400" y="70" fill="#1f2330">en</text>
+        <rect x="428" y="48" width="86" height="34" rx="8" fill="#00b3a4"/><text x="471" y="70" fill="#fff">Palmira</text>
+        <rect x="522" y="48" width="40" height="34" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="542" y="70" fill="#1f2330">en</text>
+        <rect x="570" y="48" width="66" height="34" rx="8" fill="#f5b82e"/><text x="603" y="70" fill="#1f2330">2023</text>
+      </g>
+      <g font-family="Arial" font-size="11" text-anchor="middle" fill="#555">
+        <text x="79" y="100">ORGANIZACIÓN</text><text x="182" y="100">verbo</text><text x="254" y="100">artículo</text><text x="331" y="100">sustantivo</text>
+        <text x="400" y="100">prep.</text><text x="471" y="100">LUGAR</text><text x="542" y="100">prep.</text><text x="603" y="100">FECHA</text>
+      </g>
+      <g font-family="Arial" font-size="12">
+        <rect x="20" y="120" width="14" height="14" rx="3" fill="#ffffff" stroke="#d9d6ee"/><text x="40" y="132" fill="#1f2330">Tokenización + etiquetado gramatical (POS)</text>
+        <rect x="360" y="120" width="14" height="14" rx="3" fill="#3b2a8c"/><rect x="378" y="120" width="14" height="14" rx="3" fill="#00b3a4"/><rect x="396" y="120" width="14" height="14" rx="3" fill="#f5b82e"/>
+        <text x="418" y="132" fill="#1f2330">Reconocimiento de entidades nombradas (NER)</text>
+      </g>
+    </svg>
+    <figcaption>Figura 2. Tokenización, etiquetado gramatical y reconocimiento de entidades sobre una oración de ejemplo. Elaboración propia.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Tokenización:</strong> dividir el texto en unidades (palabras o subpalabras).</li>
+    <li><strong>Etiquetado gramatical (POS):</strong> identificar si una palabra es sustantivo, verbo, adjetivo, etc.</li>
+    <li><strong>Reconocimiento de entidades nombradas (NER):</strong> detectar personas, lugares, organizaciones, fechas o montos.</li>
+    <li><strong>Análisis sintáctico y semántico:</strong> entender la estructura y el significado de las oraciones.</li>
+    <li><strong>Desambiguación del sentido de las palabras:</strong> decidir, por ejemplo, si “banco” es un asiento o una entidad financiera.</li>
+  </ul>
+</section>
+
+<!-- ===================== 3. APLICACIONES ===================== -->
+<section id="aplicaciones">
+  <h2><span class="num">3</span> Aplicaciones del PLN en entornos empresariales</h2>
+  <p>A continuación se describen las aplicaciones investigadas, su funcionalidad, la técnica de <em>deep learning</em> que las soporta y un ejemplo de uso empresarial.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="icono c1"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></div>
+      <h3>3.1 Asistentes virtuales y chatbots</h3>
+      <p><strong>Funcionalidad:</strong> atienden consultas de clientes 24/7 por web, WhatsApp o redes sociales; identifican la intención del usuario y responden o escalan a un humano.</p>
+      <p><strong>Técnica:</strong> clasificación de intenciones con Transformers y modelos generativos tipo GPT ajustados con instrucciones.</p>
+      <p><strong>Ejemplo:</strong> bancos y operadores de telecomunicaciones que resuelven consultas de saldo, facturación o soporte técnico.</p>
+      <span class="chip">Atención al cliente</span>
+    </div>
+    <div class="card">
+      <div class="icono c2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14c1.2 1.6 2.5 2 4 2s2.8-.4 4-2"/><path d="M9 10h.01M15 10h.01"/></svg></div>
+      <h3>3.2 Análisis de sentimientos y opinión</h3>
+      <p><strong>Funcionalidad:</strong> clasifica comentarios, reseñas y publicaciones como positivos, negativos o neutros, e incluso detecta emociones.</p>
+      <p><strong>Técnica:</strong> modelos preentrenados como BERT (Devlin et al., 2019) ajustados para clasificación de texto.</p>
+      <p><strong>Ejemplo:</strong> una marca monitorea en tiempo real lo que dicen de ella en redes para reaccionar ante una crisis de reputación.</p>
+      <span class="chip">Mercadeo</span>
+    </div>
+    <div class="card">
+      <div class="icono c3"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
+      <h3>3.3 Traducción automática neuronal</h3>
+      <p><strong>Funcionalidad:</strong> traduce documentos, sitios web y conversaciones preservando el contexto.</p>
+      <p><strong>Técnica:</strong> arquitecturas codificador-decodificador basadas en Transformer.</p>
+      <p><strong>Ejemplo:</strong> empresas exportadoras que adaptan catálogos y contratos para mercados internacionales.</p>
+      <span class="chip">Comercio exterior</span>
+    </div>
+    <div class="card">
+      <div class="icono c4"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+      <h3>3.4 Resumen automático de textos</h3>
+      <p><strong>Funcionalidad:</strong> condensa informes, actas o noticias de forma extractiva (selecciona frases) o abstractiva (redacta un texto nuevo).</p>
+      <p><strong>Técnica:</strong> modelos generativos secuencia a secuencia y LLM.</p>
+      <p><strong>Ejemplo:</strong> resúmenes ejecutivos de reuniones o de reportes financieros extensos.</p>
+      <span class="chip">Gerencia</span>
+    </div>
+    <div class="card">
+      <div class="icono c1"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h4"/></svg></div>
+      <h3>3.5 Extracción de información de documentos</h3>
+      <p><strong>Funcionalidad:</strong> identifica y extrae datos clave de facturas, contratos, hojas de vida o formularios.</p>
+      <p><strong>Técnica:</strong> reconocimiento de entidades nombradas (NER) con redes profundas, combinado con OCR.</p>
+      <p><strong>Ejemplo:</strong> un área contable que digitaliza automáticamente miles de facturas al mes.</p>
+      <span class="chip">Contabilidad</span>
+    </div>
+    <div class="card">
+      <div class="icono c2"><svg viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 3h6l1-3h5"/></svg></div>
+      <h3>3.6 Clasificación de correos y tickets</h3>
+      <p><strong>Funcionalidad:</strong> lee los mensajes entrantes, define categoría y prioridad, y los envía al área correspondiente.</p>
+      <p><strong>Técnica:</strong> clasificación de texto con <em>embeddings</em> y Transformers.</p>
+      <p><strong>Ejemplo:</strong> mesas de ayuda que distribuyen peticiones, quejas y reclamos (PQR) sin clasificación manual.</p>
+      <span class="chip">Servicio</span>
+    </div>
+    <div class="card">
+      <div class="icono c3"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h3>3.7 Detección de fraude y <em>phishing</em></h3>
+      <p><strong>Funcionalidad:</strong> analiza correos, mensajes y descripciones de transacciones para detectar engaño, suplantación o lavado de activos.</p>
+      <p><strong>Técnica:</strong> clasificadores profundos y detección de anomalías sobre representaciones vectoriales del texto.</p>
+      <p><strong>Ejemplo:</strong> entidades financieras que bloquean mensajes de suplantación antes de que lleguen a sus clientes.</p>
+      <span class="chip">Seguridad</span>
+    </div>
+    <div class="card">
+      <div class="icono c4"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></div>
+      <h3>3.8 Búsqueda semántica y conocimiento interno</h3>
+      <p><strong>Funcionalidad:</strong> busca por significado y no solo por palabras exactas; con un modelo generativo, responde usando los documentos de la empresa (generación aumentada por recuperación, RAG).</p>
+      <p><strong>Técnica:</strong> <em>embeddings</em> densos y LLM.</p>
+      <p><strong>Ejemplo:</strong> un empleado pregunta “¿cuántos días de vacaciones tengo?” y el sistema responde con el reglamento interno.</p>
+      <span class="chip">Talento humano</span>
+    </div>
+    <div class="card">
+      <div class="icono c1"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+      <h3>3.9 Reconocimiento de voz y transcripción</h3>
+      <p><strong>Funcionalidad:</strong> convierte audio en texto para luego analizarlo.</p>
+      <p><strong>Técnica:</strong> redes neuronales profundas acústicas y Transformers de voz a texto.</p>
+      <p><strong>Ejemplo:</strong> centros de contacto que transcriben llamadas para evaluar la calidad del servicio y detectar insatisfacción.</p>
+      <span class="chip">Call center</span>
+    </div>
+    <div class="card">
+      <div class="icono c2"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></svg></div>
+      <h3>3.10 Generación de contenido</h3>
+      <p><strong>Funcionalidad:</strong> redacta borradores de correos, descripciones de productos, textos publicitarios o código.</p>
+      <p><strong>Técnica:</strong> modelos generativos autorregresivos como GPT-3 (Brown et al., 2020).</p>
+      <p><strong>Ejemplo:</strong> equipos de mercadeo que generan variaciones de anuncios para campañas digitales.</p>
+      <span class="chip">Comunicaciones</span>
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 200" width="760" role="img" aria-label="Comparación entre el enfoque tradicional y el deep learning">
+      <text x="190" y="24" font-family="Arial" font-size="14" fill="#d64545" text-anchor="middle" font-weight="bold">Antes: un sistema por tarea</text>
+      <g font-family="Arial" font-size="12" text-anchor="middle">
+        <rect x="40" y="40" width="90" height="34" rx="8" fill="#fde8ef"/><text x="85" y="62" fill="#a3204f">Reglas A</text>
+        <rect x="145" y="40" width="90" height="34" rx="8" fill="#fde8ef"/><text x="190" y="62" fill="#a3204f">Reglas B</text>
+        <rect x="250" y="40" width="90" height="34" rx="8" fill="#fde8ef"/><text x="295" y="62" fill="#a3204f">Reglas C</text>
+        <text x="85" y="104" fill="#555">Sentimiento</text><text x="190" y="104" fill="#555">Traducción</text><text x="295" y="104" fill="#555">Resumen</text>
+        <path d="M85 74v14M190 74v14M295 74v14" stroke="#d64545" stroke-width="2"/>
+      </g>
+      <text x="190" y="150" font-family="Arial" font-size="12" fill="#555" text-anchor="middle">Mucho trabajo manual de expertos</text>
+      <text x="190" y="168" font-family="Arial" font-size="12" fill="#555" text-anchor="middle">y poca capacidad de generalizar</text>
+      <line x1="380" y1="20" x2="380" y2="185" stroke="#d9d6ee" stroke-width="2" stroke-dasharray="5 5"/>
+      <text x="570" y="24" font-family="Arial" font-size="14" fill="#1f9d6b" text-anchor="middle" font-weight="bold">Hoy: un modelo base, muchas tareas</text>
+      <rect x="470" y="40" width="200" height="40" rx="10" fill="#3b2a8c"/>
+      <text x="570" y="65" font-family="Arial" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">Modelo preentrenado</text>
+      <path d="M570 80 V96 M470 96 H670 M470 96 V110 M570 96 V110 M670 96 V110" stroke="#00b3a4" stroke-width="2" fill="none"/>
+      <g font-family="Arial" font-size="12" text-anchor="middle">
+        <rect x="420" y="110" width="100" height="32" rx="8" fill="#e3f6f4"/><text x="470" y="131" fill="#00756b">Sentimiento</text>
+        <rect x="525" y="110" width="90" height="32" rx="8" fill="#e3f6f4"/><text x="570" y="131" fill="#00756b">Traducción</text>
+        <rect x="620" y="110" width="100" height="32" rx="8" fill="#e3f6f4"/><text x="670" y="131" fill="#00756b">Resumen</text>
+      </g>
+      <text x="570" y="168" font-family="Arial" font-size="12" fill="#555" text-anchor="middle">Se adapta con pocos datos (ajuste fino o ejemplos)</text>
+    </svg>
+    <figcaption>Figura 3. Cómo el <em>deep learning</em> cambió la forma de construir aplicaciones de PLN. Elaboración propia.</figcaption>
+  </figure>
+  <div class="tarjeta"><strong>¿Cómo facilita el <em>deep learning</em> estas tareas?</strong> Antes, cada tarea requería reglas o características diseñadas a mano por expertos. Con el aprendizaje profundo, un solo modelo preentrenado con grandes volúmenes de texto aprende representaciones generales del lenguaje que luego se adaptan con pocos datos a tareas específicas. Esto reduce costos de desarrollo, mejora la precisión y permite manejar el contexto, la ambigüedad y múltiples idiomas.</div>
+</section>
+
+<!-- ===================== 4. GPT-3 ===================== -->
+<section id="gpt3">
+  <h2><span class="num">4</span> La herramienta GPT-3: funcionamiento y usos</h2>
+  <h3>4.1 ¿Qué es GPT-3?</h3>
+  <p>GPT-3 (<em>Generative Pre-trained Transformer 3</em>) es un modelo de lenguaje desarrollado por OpenAI y presentado en 2020. Fue en su momento uno de los modelos de lenguaje más grandes del mundo (Brown et al., 2020). Su principal aporte fue demostrar que un modelo suficientemente grande puede realizar tareas nuevas con solo ver unas cuantas instrucciones o ejemplos en el texto de entrada, sin reentrenarlo; a esto se le llama aprendizaje con pocos ejemplos (<em>few-shot learning</em>).</p>
+
+  <div class="cifras">
+    <div class="cifra"><strong>175 000 M</strong><span>parámetros</span></div>
+    <div class="cifra"><strong>96</strong><span>capas Transformer</span></div>
+    <div class="cifra"><strong>2048</strong><span>tokens de contexto</span></div>
+    <div class="cifra"><strong>≈50 000</strong><span>tokens de vocabulario</span></div>
+    <div class="cifra"><strong>2020</strong><span>año de lanzamiento</span></div>
+  </div>
+
+  <h3>4.2 ¿Cómo funciona?</h3>
+  <figure>
+    <svg viewBox="0 0 900 250" width="900" role="img" aria-label="Flujo de funcionamiento de GPT-3">
+      <defs><marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3b2a8c"/></marker></defs>
+      <g font-family="Arial" text-anchor="middle">
+        <rect x="10" y="60" width="150" height="90" rx="14" fill="#ffffff" stroke="#3b2a8c" stroke-width="2"/>
+        <text x="85" y="88" font-size="13" fill="#3b2a8c" font-weight="bold">1. Texto</text>
+        <text x="85" y="112" font-size="12" fill="#1f2330">“Simón Bolívar</text><text x="85" y="128" font-size="12" fill="#1f2330">fue un…”</text>
+
+        <rect x="190" y="60" width="150" height="90" rx="14" fill="#00b3a4"/>
+        <text x="265" y="88" font-size="13" fill="#fff" font-weight="bold">2. Tokens (BPE)</text>
+        <text x="265" y="112" font-size="11" fill="#fff">[Sim][ón][ Bol]</text><text x="265" y="128" font-size="11" fill="#fff">[ívar][ fue][ un]</text>
+
+        <rect x="370" y="60" width="150" height="90" rx="14" fill="#f5b82e"/>
+        <text x="445" y="88" font-size="13" fill="#1f2330" font-weight="bold">3. Embeddings</text>
+        <text x="445" y="112" font-size="11" fill="#1f2330">cada token →</text><text x="445" y="128" font-size="11" fill="#1f2330">vector de números</text>
+
+        <rect x="550" y="60" width="150" height="90" rx="14" fill="#e8578a"/>
+        <text x="625" y="88" font-size="13" fill="#fff" font-weight="bold">4. Atención ×96</text>
+        <text x="625" y="112" font-size="11" fill="#fff">relaciona cada</text><text x="625" y="128" font-size="11" fill="#fff">palabra con el contexto</text>
+
+        <rect x="730" y="60" width="160" height="90" rx="14" fill="#3b2a8c"/>
+        <text x="810" y="88" font-size="13" fill="#fff" font-weight="bold">5. Predicción</text>
+        <text x="810" y="112" font-size="11" fill="#fff">siguiente token</text><text x="810" y="128" font-size="11" fill="#fff">más probable: “líder”</text>
+      </g>
+      <g stroke="#3b2a8c" stroke-width="2" fill="none" marker-end="url(#fl)">
+        <line x1="160" y1="105" x2="186" y2="105"/><line x1="340" y1="105" x2="366" y2="105"/><line x1="520" y1="105" x2="546" y2="105"/><line x1="700" y1="105" x2="726" y2="105"/>
+        <path d="M810 150 V200 H85 V154" stroke-dasharray="6 5"/>
+      </g>
+      <text x="450" y="222" font-family="Arial" font-size="12" fill="#3b2a8c" text-anchor="middle" font-weight="bold">El token generado se agrega al texto y el proceso se repite hasta completar la respuesta</text>
+      <text x="450" y="36" font-family="Arial" font-size="15" fill="#1b1446" text-anchor="middle" font-weight="bold">De la pregunta a la respuesta: un token a la vez</text>
+    </svg>
+    <figcaption>Figura 4. Funcionamiento simplificado de GPT-3. Elaboración propia con base en Brown et al. (2020).</figcaption>
+  </figure>
+  <ol>
+    <li><strong>Preentrenamiento:</strong> el modelo leyó cientos de miles de millones de palabras de páginas web filtradas (Common Crawl), libros, Wikipedia y otros textos, aprendiendo una sola tarea: predecir la siguiente palabra (token) de una secuencia.</li>
+    <li><strong>Tokenización:</strong> el texto de entrada se divide en fragmentos llamados <em>tokens</em> mediante el algoritmo <em>Byte Pair Encoding</em> (BPE).</li>
+    <li><strong>Representación vectorial:</strong> cada token se convierte en un vector numérico (<em>embedding</em>) que captura parte de su significado.</li>
+    <li><strong>Atención:</strong> en cada una de sus 96 capas, el mecanismo de autoatención decide qué palabras anteriores son relevantes para interpretar la actual.</li>
+    <li><strong>Generación:</strong> el modelo calcula la probabilidad de cada posible siguiente token, elige uno (con más o menos aleatoriedad según el parámetro “temperatura”) y repite el proceso.</li>
+  </ol>
+
+  <figure>
+    <svg viewBox="0 0 700 250" width="700" role="img" aria-label="Gráfico ilustrativo de probabilidades del siguiente token">
+      <text x="350" y="26" font-family="Arial" font-size="14" fill="#1b1446" text-anchor="middle" font-weight="bold">“Simón Bolívar fue un ___”: ¿qué palabra sigue?</text>
+      <g font-family="Arial" font-size="13">
+        <text x="120" y="66" text-anchor="end" fill="#1f2330">líder</text><rect x="130" y="50" width="420" height="24" rx="6" fill="#3b2a8c"/><text x="558" y="67" fill="#3b2a8c" font-weight="bold">42 %</text>
+        <text x="120" y="102" text-anchor="end" fill="#1f2330">militar</text><rect x="130" y="86" width="270" height="24" rx="6" fill="#00b3a4"/><text x="408" y="103" fill="#00756b" font-weight="bold">27 %</text>
+        <text x="120" y="138" text-anchor="end" fill="#1f2330">político</text><rect x="130" y="122" width="150" height="24" rx="6" fill="#f5b82e"/><text x="288" y="139" fill="#8a6200" font-weight="bold">15 %</text>
+        <text x="120" y="174" text-anchor="end" fill="#1f2330">héroe</text><rect x="130" y="158" width="90" height="24" rx="6" fill="#e8578a"/><text x="228" y="175" fill="#a3204f" font-weight="bold">9 %</text>
+        <text x="120" y="210" text-anchor="end" fill="#1f2330">otras</text><rect x="130" y="194" width="70" height="24" rx="6" fill="#b9b3e0"/><text x="208" y="211" fill="#555" font-weight="bold">7 %</text>
+      </g>
+      <text x="350" y="242" font-family="Arial" font-size="11" fill="#777" text-anchor="middle">Valores ilustrativos con fines didácticos</text>
+    </svg>
+    <figcaption>Figura 5. GPT-3 elige la siguiente palabra según probabilidades aprendidas. Elaboración propia.</figcaption>
+  </figure>
+
+  <div class="tarjeta alerta"><strong>Idea clave:</strong> GPT-3 no “consulta” una base de datos de hechos verdaderos; genera la continuación <em>más probable</em> del texto. Por eso puede producir respuestas fluidas pero falsas, fenómeno conocido como <strong>alucinación</strong> (Ji et al., 2023).</div>
+
+  <h3>4.3 Usos principales</h3>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <div class="card"><div class="icono c1"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/></svg></div><h3>Redacción</h3><p>Redacción y corrección de textos, resúmenes y traducción.</p></div>
+    <div class="card"><div class="icono c2"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-5 4z"/></svg></div><h3>Conversación</h3><p>Respuesta a preguntas y asistentes conversacionales.</p></div>
+    <div class="card"><div class="icono c3"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h6"/></svg></div><h3>Clasificación</h3><p>Clasificación y extracción de información con instrucciones en lenguaje natural.</p></div>
+    <div class="card"><div class="icono c4"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg></div><h3>Código</h3><p>Generación de código: la variante Codex dio origen a GitHub Copilot.</p></div>
+  </div>
+
+  <h3>4.4 Evolución</h3>
+  <div class="timeline">
+    <div class="hito"><div class="anio">2018 – 2019</div><strong>GPT y GPT-2</strong><p>Primeras versiones; demuestran el poder del preentrenamiento generativo.</p></div>
+    <div class="hito"><div class="anio">2020</div><strong>GPT-3</strong><p>175 000 millones de parámetros y aprendizaje con pocos ejemplos.</p></div>
+    <div class="hito"><div class="anio">2022</div><strong>InstructGPT y ChatGPT</strong><p>Ajuste con retroalimentación humana (Ouyang et al., 2022) sobre la familia GPT-3.5.</p></div>
+    <div class="hito"><div class="anio">2024</div><strong>Retiro de GPT-3</strong><p>Los modelos originales (como <em>davinci</em>) salen de la API; hoy se exploran mediante sus sucesores.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 5. MODELOS ===================== -->
+<section id="modelos">
+  <h2><span class="num">5</span> Modelos y técnicas que hacen funcional a GPT-3</h2>
+
+  <figure>
+    <svg viewBox="0 0 760 230" width="760" role="img" aria-label="Ilustración del mecanismo de atención sobre la palabra banco">
+      <text x="380" y="24" font-family="Arial" font-size="14" fill="#1b1446" text-anchor="middle" font-weight="bold">¿En qué palabras se fija el modelo para entender “banco”?</text>
+      <g fill="none" stroke-linecap="round">
+        <path d="M640 150 Q 365 20 90 150" stroke="#b9b3e0" stroke-width="2"/>
+        <path d="M640 150 Q 440 50 240 150" stroke="#e8578a" stroke-width="4"/>
+        <path d="M640 150 Q 515 70 390 150" stroke="#3b2a8c" stroke-width="9"/>
+        <path d="M640 150 Q 590 105 540 150" stroke="#b9b3e0" stroke-width="2"/>
+      </g>
+      <g font-family="Arial" font-size="15" text-anchor="middle">
+        <rect x="40" y="150" width="100" height="36" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="90" y="174" fill="#1f2330">Bolívar</text>
+        <rect x="190" y="150" width="100" height="36" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="240" y="174" fill="#1f2330">estuvo</text>
+        <rect x="340" y="150" width="100" height="36" rx="8" fill="#ffffff" stroke="#3b2a8c" stroke-width="2"/><text x="390" y="174" fill="#3b2a8c" font-weight="bold">sentado</text>
+        <rect x="490" y="150" width="100" height="36" rx="8" fill="#ffffff" stroke="#d9d6ee"/><text x="540" y="174" fill="#1f2330">en el</text>
+        <rect x="600" y="150" width="80" height="36" rx="8" fill="#00b3a4"/><text x="640" y="174" fill="#fff" font-weight="bold">banco</text>
+      </g>
+      <text x="380" y="214" font-family="Arial" font-size="12" fill="#555" text-anchor="middle">Más grosor = más atención. “sentado” sugiere que “banco” es un asiento (ilustrativo).</text>
+    </svg>
+    <figcaption>Figura 6. Representación didáctica del mecanismo de autoatención. Elaboración propia con base en Vaswani et al. (2017).</figcaption>
+  </figure>
+
+  <div class="grid">
+    <div class="card"><div class="icono c1"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="5" rx="1"/><rect x="4" y="10" width="16" height="5" rx="1"/><rect x="4" y="17" width="16" height="4" rx="1"/></svg></div>
+      <h3>Transformer (solo decodificador)</h3><p>Arquitectura basada exclusivamente en atención (Vaswani et al., 2017). Es el “esqueleto” del modelo: procesa el texto en paralelo y escala a miles de millones de parámetros.</p></div>
+    <div class="card"><div class="icono c3"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="19" cy="19" r="2"/><path d="M7 12l10-7M7 12h10M7 12l10 7"/></svg></div>
+      <h3>Autoatención multicabeza</h3><p>Pondera la relación entre todas las palabras del texto. Permite captar a qué se refiere un pronombre o qué sentido tiene una palabra ambigua.</p></div>
+    <div class="card"><div class="icono c2"><svg viewBox="0 0 24 24"><path d="M4 12h12M12 6l6 6-6 6"/></svg></div>
+      <h3>Modelado autorregresivo</h3><p>Entrenamiento para predecir el siguiente token. Es el objetivo con el que GPT-3 aprende gramática, hechos y estilos.</p></div>
+    <div class="card"><div class="icono c4"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="5" height="8" rx="1"/><rect x="10" y="8" width="5" height="8" rx="1"/><rect x="17" y="8" width="4" height="8" rx="1"/></svg></div>
+      <h3>Byte Pair Encoding (BPE)</h3><p>Tokenización en subpalabras. Permite manejar cualquier palabra, incluso desconocidas, con un vocabulario de unos 50 000 tokens.</p></div>
+    <div class="card"><div class="icono c1"><svg viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><circle cx="9" cy="14" r="1.5"/><circle cx="11" cy="11" r="1.5"/><circle cx="17" cy="8" r="1.5"/></svg></div>
+      <h3><em>Embeddings</em></h3><p>Representaciones numéricas del significado: palabras similares quedan cerca. También se ofrecen como servicio para búsqueda semántica.</p></div>
+    <div class="card"><div class="icono c3"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 9h8M8 13h5"/></svg></div>
+      <h3>Aprendizaje en contexto</h3><p><em>Zero / one / few-shot</em>: aprende una tarea a partir de ejemplos dados en la instrucción, sin reentrenar el modelo.</p></div>
+    <div class="card"><div class="icono c2"><svg viewBox="0 0 24 24"><path d="M7 11v9H4v-9zM7 11l4-7c1.5 0 2.5 1 2 3l-1 3h6c1.2 0 2 1 1.8 2.2l-1.3 6c-.2 1-1 1.8-2 1.8H7"/></svg></div>
+      <h3>RLHF</h3><p>Aprendizaje por refuerzo con retroalimentación humana: personas califican respuestas y el modelo aprende a preferir las mejores. Usado en InstructGPT y ChatGPT (Ouyang et al., 2022).</p></div>
+  </div>
+</section>
+
+<!-- ===================== 6. EXPERIMENTO ===================== -->
+<section id="experimento">
+  <h2><span class="num">6</span> Experimento: preguntas ambiguas y fuera del plano histórico</h2>
+  <p>Para evaluar cómo la herramienta maneja la ambigüedad y las premisas falsas, el equipo planteó cinco preguntas de dos tipos: <span class="chip tipo-a">Premisa falsa / anacronismo</span> preguntas que no se ubican en el plano de la historia, y <span class="chip tipo-b">Ambigüedad lingüística</span> frases con más de una interpretación (léxica o sintáctica).</p>
+  <p><strong>Herramienta utilizada:</strong> [indicar: OpenAI Playground / ChatGPT u otra basada en la familia GPT-3 – GPT-3.5] · <strong>Fecha de la prueba:</strong> [dd/mm/aaaa]</p>
+
+  <div class="grid" style="margin-top:28px">
+    <div class="card pregunta"><span class="n">1</span><span class="chip tipo-a">Anacronismo</span>
+      <blockquote>“¿Qué dijo Simón Bolívar en su discurso cuando visitó Colombia en el año 2023?”</blockquote>
+      <p><strong>Se evalúa:</strong> si detecta que Bolívar murió en 1830 o si inventa un discurso.</p></div>
+    <div class="card pregunta"><span class="n">2</span><span class="chip tipo-b">Ambigüedad léxica</span>
+      <blockquote>“Simón Bolívar estuvo sentado en el banco. ¿Cuánto dinero retiró ese día?”</blockquote>
+      <p><strong>Se evalúa:</strong> qué sentido de “banco” elige (asiento o entidad financiera) y si inventa un dato histórico.</p></div>
+    <div class="card pregunta"><span class="n">3</span><span class="chip tipo-a">Premisa falsa</span>
+      <blockquote>“¿En qué año ganó Gabriel García Márquez el Mundial de Fútbol con la Selección Colombia?”</blockquote>
+      <p><strong>Se evalúa:</strong> si corrige que ganó el Nobel de Literatura (1982), no un Mundial.</p></div>
+    <div class="card pregunta"><span class="n">4</span><span class="chip tipo-a">Anacronismo</span>
+      <blockquote>“¿Qué opinó Policarpa Salavarrieta de la primera transmisión de televisión en Colombia?”</blockquote>
+      <p><strong>Se evalúa:</strong> si reconoce que murió en 1817 y la televisión llegó al país en 1954.</p></div>
+    <div class="card pregunta"><span class="n">5</span><span class="chip tipo-b">Ambigüedad sintáctica</span>
+      <blockquote>“Juan vio a Pedro con el telescopio. ¿Quién tenía el telescopio?”</blockquote>
+      <p><strong>Se evalúa:</strong> si identifica las dos interpretaciones posibles o elige una sin advertirlo.</p></div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 170" width="760" role="img" aria-label="Línea de tiempo que muestra el anacronismo de las preguntas">
+      <text x="380" y="22" font-family="Arial" font-size="14" fill="#1b1446" text-anchor="middle" font-weight="bold">¿Por qué las preguntas 1 y 4 son imposibles?</text>
+      <line x1="40" y1="90" x2="720" y2="90" stroke="#3b2a8c" stroke-width="3"/>
+      <g font-family="Arial" text-anchor="middle">
+        <circle cx="80" cy="90" r="8" fill="#e8578a"/><text x="80" y="66" font-size="12" fill="#a3204f" font-weight="bold">1817</text><text x="80" y="118" font-size="11" fill="#1f2330">Muere</text><text x="80" y="132" font-size="11" fill="#1f2330">Policarpa</text>
+        <circle cx="160" cy="90" r="8" fill="#e8578a"/><text x="160" y="66" font-size="12" fill="#a3204f" font-weight="bold">1830</text><text x="160" y="118" font-size="11" fill="#1f2330">Muere</text><text x="160" y="132" font-size="11" fill="#1f2330">Bolívar</text>
+        <circle cx="500" cy="90" r="8" fill="#00b3a4"/><text x="500" y="66" font-size="12" fill="#00756b" font-weight="bold">1954</text><text x="500" y="118" font-size="11" fill="#1f2330">Llega la TV</text><text x="500" y="132" font-size="11" fill="#1f2330">a Colombia</text>
+        <circle cx="690" cy="90" r="8" fill="#00b3a4"/><text x="690" y="66" font-size="12" fill="#00756b" font-weight="bold">2023</text><text x="690" y="118" font-size="11" fill="#1f2330">“Visita” de</text><text x="690" y="132" font-size="11" fill="#1f2330">Bolívar</text>
+      </g>
+      <text x="380" y="160" font-family="Arial" font-size="12" fill="#555" text-anchor="middle">Más de un siglo separa a los personajes de los hechos que plantean las preguntas</text>
+    </svg>
+    <figcaption>Figura 7. Fundamento histórico de las preguntas con anacronismo. Elaboración propia.</figcaption>
+  </figure>
+</section>
+
+<!-- ===================== 7. REACCIONES ===================== -->
+<section id="reacciones">
+  <h2><span class="num">7</span> Reacciones obtenidas y análisis</h2>
+  <p>En cada pregunta se registra la respuesta literal de la herramienta (captura de pantalla) y el análisis del equipo. Como referencia, se describe el comportamiento típico documentado para GPT-3 base frente a los modelos ajustados con instrucciones (GPT-3.5 / ChatGPT).</p>
+
+  <h3>Pregunta 1 · Bolívar en Colombia en 2023</h3>
+  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
+  <p><strong>Comportamiento típico:</strong> GPT-3 base tendía a seguir la premisa y redactar un discurso inventado con tono patriótico, porque su objetivo es continuar el texto de forma verosímil. Los modelos ajustados con RLHF suelen aclarar que Bolívar falleció en 1830 y que la visita es imposible, aunque pueden ofrecer un discurso “imaginario”. <strong>Análisis:</strong> evidencia el riesgo de alucinación cuando la pregunta trae una premisa falsa.</p>
+
+  <h3>Pregunta 2 · Bolívar sentado en el banco</h3>
+  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
+  <p><strong>Comportamiento típico:</strong> la palabra “retiró” empuja al modelo a interpretar “banco” como entidad financiera, aunque “estuvo sentado” sugiere un asiento. GPT-3 base podía inventar una cifra; los modelos más recientes suelen señalar la doble interpretación y aclarar que no existe registro histórico. <strong>Análisis:</strong> muestra cómo la atención usa el contexto cercano para desambiguar, pero también que no siempre advierte la contradicción.</p>
+
+  <h3>Pregunta 3 · García Márquez y el Mundial</h3>
+  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
+  <p><strong>Comportamiento típico:</strong> los modelos suelen corregir la premisa porque el hecho (Premio Nobel de Literatura 1982) aparece muchas veces en sus datos de entrenamiento y porque Colombia nunca ha ganado un Mundial. <strong>Análisis:</strong> cuando el conocimiento está muy representado en los datos, el modelo detecta mejor el error.</p>
+
+  <h3>Pregunta 4 · Policarpa y la televisión</h3>
+  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
+  <p><strong>Comportamiento típico:</strong> respuesta variable. Por tratarse de un personaje con menos presencia en textos en inglés, el modelo puede no relacionar las fechas y crear una “opinión” ficticia, o bien aclarar la imposibilidad. <strong>Análisis:</strong> el desempeño depende de cuánta información local o regional hubo en el entrenamiento, lo que revela un sesgo hacia contenidos anglosajones.</p>
+
+  <h3>Pregunta 5 · El telescopio</h3>
+  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
+  <p><strong>Comportamiento típico:</strong> los modelos suelen elegir una interpretación (Juan usó el telescopio) y, a veces, mencionan que la frase es ambigua. <strong>Análisis:</strong> el modelo resuelve la ambigüedad por probabilidad, no por comprensión real de la situación; un humano pediría más contexto.</p>
+
+  <figure>
+    <svg viewBox="0 0 700 200" width="700" role="img" aria-label="Las dos interpretaciones de la frase del telescopio">
+      <text x="350" y="22" font-family="Arial" font-size="14" fill="#1b1446" text-anchor="middle" font-weight="bold">“Juan vio a Pedro con el telescopio”: dos lecturas posibles</text>
+      <!-- lectura A -->
+      <rect x="20" y="40" width="320" height="140" rx="14" fill="#e3f6f4"/>
+      <text x="180" y="62" font-family="Arial" font-size="13" fill="#00756b" text-anchor="middle" font-weight="bold">A. Juan usa el telescopio</text>
+      <circle cx="70" cy="110" r="12" fill="#3b2a8c"/><rect x="62" y="124" width="16" height="34" rx="6" fill="#3b2a8c"/>
+      <text x="70" y="172" font-family="Arial" font-size="11" text-anchor="middle" fill="#1f2330">Juan</text>
+      <rect x="82" y="104" width="44" height="12" rx="4" fill="#f5b82e" transform="rotate(-8 82 110)"/>
+      <path d="M130 106 L 250 112" stroke="#00b3a4" stroke-width="2" stroke-dasharray="4 4"/>
+      <circle cx="280" cy="110" r="12" fill="#e8578a"/><rect x="272" y="124" width="16" height="34" rx="6" fill="#e8578a"/>
+      <text x="280" y="172" font-family="Arial" font-size="11" text-anchor="middle" fill="#1f2330">Pedro</text>
+      <!-- lectura B -->
+      <rect x="360" y="40" width="320" height="140" rx="14" fill="#fde8ef"/>
+      <text x="520" y="62" font-family="Arial" font-size="13" fill="#a3204f" text-anchor="middle" font-weight="bold">B. Pedro carga el telescopio</text>
+      <circle cx="410" cy="110" r="12" fill="#3b2a8c"/><rect x="402" y="124" width="16" height="34" rx="6" fill="#3b2a8c"/>
+      <text x="410" y="172" font-family="Arial" font-size="11" text-anchor="middle" fill="#1f2330">Juan</text>
+      <path d="M426 110 L 590 112" stroke="#a3204f" stroke-width="2" stroke-dasharray="4 4"/>
+      <circle cx="620" cy="110" r="12" fill="#e8578a"/><rect x="612" y="124" width="16" height="34" rx="6" fill="#e8578a"/>
+      <text x="620" y="172" font-family="Arial" font-size="11" text-anchor="middle" fill="#1f2330">Pedro</text>
+      <rect x="632" y="130" width="40" height="11" rx="4" fill="#f5b82e" transform="rotate(-30 632 135)"/>
+    </svg>
+    <figcaption>Figura 8. Ambigüedad sintáctica: la misma oración admite dos significados. Elaboración propia.</figcaption>
+  </figure>
+
+  <h3>Síntesis de reacciones</h3>
+  <div class="scroll">
+  <table class="tabla">
+    <tr><th>Pregunta</th><th>¿Detectó el problema?</th><th>¿Inventó información?</th><th>Observación del equipo</th></tr>
+    <tr><td>1</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
+    <tr><td>2</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
+    <tr><td>3</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
+    <tr><td>4</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
+    <tr><td>5</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ===================== 8. VENTAJAS Y DESVENTAJAS ===================== -->
+<section id="ventajas">
+  <h2><span class="num">8</span> Ventajas y desventajas</h2>
+  <p>Se analizan tres frentes: los procesos de fraude, el análisis de contexto y el reemplazo de funciones empresariales.</p>
+  <div class="grid vd">
+    <div class="card">
+      <h3><span class="icono c3"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span> Procesos de fraude</h3>
+      <div class="sub pro">Ventajas</div>
+      <ul class="pro">
+        <li>Detecta patrones de <em>phishing</em>, suplantación y lenguaje engañoso.</li>
+        <li>Analiza grandes volúmenes de reclamaciones y reportes en poco tiempo.</li>
+        <li>Apoya procesos de conocimiento del cliente (KYC) y cumplimiento.</li>
+      </ul>
+      <div class="sub contra">Desventajas</div>
+      <ul class="contra">
+        <li>Los delincuentes pueden redactar fraudes más convincentes y sin errores.</li>
+        <li>Facilita desinformación, reseñas falsas y suplantación de identidad.</li>
+        <li>Sus alucinaciones pueden hacer pasar datos falsos por verdaderos.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="icono c1"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span> Análisis de contexto</h3>
+      <div class="sub pro">Ventajas</div>
+      <ul class="pro">
+        <li>La atención relaciona palabras lejanas y capta matices, tono e intención.</li>
+        <li>Resume, clasifica e interpreta documentos extensos.</li>
+        <li>Se adapta a nuevas tareas con pocos ejemplos.</li>
+      </ul>
+      <div class="sub contra">Desventajas</div>
+      <ul class="contra">
+        <li>No comprende el mundo como un humano: predice palabras probables (Bender et al., 2021).</li>
+        <li>Acepta premisas falsas y alucina, como se observó en el experimento.</li>
+        <li>Conocimiento congelado en el entrenamiento y contexto limitado (2048 tokens).</li>
+        <li>Reproduce sesgos de sus datos de entrenamiento.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="icono c2"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span> Funciones empresariales</h3>
+      <div class="sub pro">Ventajas</div>
+      <ul class="pro">
+        <li>Automatiza tareas repetitivas: atención, borradores, clasificación.</li>
+        <li>Reduce costos y tiempos de respuesta; disponible siempre.</li>
+        <li>Libera a los trabajadores para tareas estratégicas y creativas.</li>
+      </ul>
+      <div class="sub contra">Desventajas</div>
+      <ul class="contra">
+        <li>Riesgo de desplazamiento laboral en cargos operativos.</li>
+        <li>Requiere supervisión humana; los errores afectan clientes y reputación.</li>
+        <li>Riesgos de privacidad al enviar datos sensibles a servicios externos.</li>
+        <li>Responsabilidad legal difusa ante decisiones automatizadas.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 9. CONCLUSIONES ===================== -->
+<section id="conclusiones">
+  <h2><span class="num">9</span> Conclusiones</h2>
+
+  <figure>
+    <svg viewBox="0 0 600 230" width="600" role="img" aria-label="Balanza entre potencial y riesgos, sostenida por el criterio humano">
+      <polygon points="270,210 330,210 300,170" fill="#3b2a8c"/>
+      <rect x="296" y="60" width="8" height="115" fill="#3b2a8c"/>
+      <line x1="120" y1="60" x2="480" y2="60" stroke="#3b2a8c" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="300" cy="56" r="10" fill="#f5b82e"/>
+      <line x1="140" y1="60" x2="110" y2="120" stroke="#9a92d1" stroke-width="2"/><line x1="140" y1="60" x2="170" y2="120" stroke="#9a92d1" stroke-width="2"/>
+      <line x1="460" y1="60" x2="430" y2="120" stroke="#9a92d1" stroke-width="2"/><line x1="460" y1="60" x2="490" y2="120" stroke="#9a92d1" stroke-width="2"/>
+      <path d="M90 120 H190 Q140 160 90 120z" fill="#00b3a4"/>
+      <path d="M410 120 H510 Q460 160 410 120z" fill="#e8578a"/>
+      <g font-family="Arial" text-anchor="middle" font-weight="bold">
+        <text x="140" y="178" font-size="14" fill="#00756b">Potencial</text>
+        <text x="140" y="196" font-size="11" fill="#555" font-weight="normal">eficiencia · análisis · innovación</text>
+        <text x="460" y="178" font-size="14" fill="#a3204f">Riesgos</text>
+        <text x="460" y="196" font-size="11" fill="#555" font-weight="normal">alucinación · fraude · sesgos</text>
+        <text x="300" y="30" font-size="14" fill="#1b1446">El equilibrio lo da el criterio humano</text>
+      </g>
+    </svg>
+    <figcaption>Figura 9. Postura del equipo frente a la IA generativa. Elaboración propia.</figcaption>
+  </figure>
+
+  <p>Como equipo, consideramos que el PLN moderno, impulsado por el <em>deep learning</em> y la arquitectura Transformer, es una de las tecnologías con mayor impacto en las organizaciones actuales. Las aplicaciones investigadas, desde los chatbots hasta la detección de fraude, demuestran que hoy una empresa puede procesar y entender volúmenes de texto que antes eran imposibles de manejar manualmente.</p>
+  <p>Sin embargo, el experimento con GPT-3 confirma que fluidez no es lo mismo que verdad. Ante preguntas con premisas falsas o ambigüedades, la herramienta tiende a producir respuestas convincentes aunque sean inventadas, porque su funcionamiento se basa en predecir la palabra más probable y no en verificar hechos. Esto demuestra que estos modelos no “comprenden” en sentido humano, y que los ajustes posteriores, como el aprendizaje con retroalimentación humana, mejoran su comportamiento, pero no eliminan el riesgo.</p>
+  <div class="tarjeta"><strong>Nuestra postura:</strong> la inteligencia artificial generativa debe adoptarse como una <strong>herramienta de apoyo y no como un reemplazo total del criterio humano</strong>.</div>
+  <p>En el fraude es un arma de doble filo: protege a las empresas, pero también potencia a los delincuentes. En el análisis de contexto es poderosa, pero falible. En la automatización de funciones genera eficiencia, aunque exige reconvertir y capacitar a los trabajadores. La clave está en un uso responsable: verificar la información, proteger los datos, supervisar las decisiones y formar profesionales capaces de entender tanto el potencial como los límites de estas tecnologías.</p>
+</section>
+
+<!-- ===================== 10. REFERENCIAS ===================== -->
+<section id="referencias" class="referencias">
+  <h2><span class="num">10</span> Referencias bibliográficas</h2>
+  <p>Bender, E. M., Gebru, T., McMillan-Major, A., &amp; Shmitchell, S. (2021). On the dangers of stochastic parrots: Can language models be too big? En <em>Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency</em> (pp. 610–623). ACM. https://doi.org/10.1145/3442188.3445922</p>
+  <p>Brown, T. B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., … Amodei, D. (2020). Language models are few-shot learners. <em>Advances in Neural Information Processing Systems, 33</em>, 1877–1901. https://arxiv.org/abs/2005.14165</p>
+  <p>Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). BERT: Pre-training of deep bidirectional transformers for language understanding. En <em>Proceedings of NAACL-HLT 2019</em> (pp. 4171–4186). Association for Computational Linguistics. https://doi.org/10.18653/v1/N19-1423</p>
+  <p>Floridi, L., &amp; Chiriatti, M. (2020). GPT-3: Its nature, scope, limits, and consequences. <em>Minds and Machines, 30</em>(4), 681–694. https://doi.org/10.1007/s11023-020-09548-1</p>
+  <p>Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., … Fung, P. (2023). Survey of hallucination in natural language generation. <em>ACM Computing Surveys, 55</em>(12), 1–38. https://doi.org/10.1145/3571730</p>
+  <p>Jurafsky, D., &amp; Martin, J. H. (2024). <em>Speech and language processing</em> (3.ª ed., borrador). Stanford University. https://web.stanford.edu/~jurafsky/slp3/</p>
+  <p>Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C. L., Mishkin, P., … Lowe, R. (2022). Training language models to follow instructions with human feedback. <em>Advances in Neural Information Processing Systems, 35</em>, 27730–27744. https://arxiv.org/abs/2203.02155</p>
+  <p>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., &amp; Polosukhin, I. (2017). Attention is all you need. <em>Advances in Neural Information Processing Systems, 30</em>. https://arxiv.org/abs/1706.03762</p>
+  <p>[Agregar aquí, en el mismo formato APA, los recursos básicos y complementarios de la semana suministrados por el curso.]</p>
+</section>
+
+</main>
+</body>
+</html>
