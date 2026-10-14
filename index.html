@@ -83,6 +83,17 @@
   .vd .sub.pro { color:var(--verde); } .vd .sub.contra { color:var(--rojo); }
 
   .referencias p { padding-left:36px; text-indent:-36px; text-align:left; }
+   /* CAPTURAS */
+  .captura img { max-width:100%; border:1px solid var(--borde); border-radius:10px; }
+    .respuesta { background:#fff; border-left:5px solid var(--primario); padding:12px 16px; margin:12px 0; border-radius:8px; font-style:italic; text-align:left; }
+    .respuesta b { font-style:normal; color:var(--primario); }
+    .resultado { display:inline-block; font-weight:bold; font-size:.85rem; padding:3px 12px; border-radius:20px; margin:4px 4px 4px 0; }
+    .ok { background:#e3f6ec; color:#1f7a50; } .medio { background:#fff4d6; color:#8a6200; } .mal { background:#fde8e8; color:#b02a2a; }
+    .bloque-pregunta { background:var(--suave); border-radius:16px; padding:18px 20px; margin:24px 0; }
+    .bloque-pregunta h3 { margin-top:0; }
+    .marcador { display:flex; flex-wrap:wrap; gap:12px; margin:20px 0; }
+    .marcador div { flex:1 1 150px; border-radius:14px; padding:16px; text-align:center; }
+    .marcador strong { display:block; font-size:2rem; }
 </style>
 </head>
 <body>
@@ -526,30 +537,71 @@ Ricardo Arturo Salamanca Mora
   </figure>
 </section>
 
+
 <!-- ===================== 7. REACCIONES ===================== -->
 <section id="reacciones">
   <h2><span class="num">7</span> Reacciones obtenidas y análisis</h2>
-  <p>En cada pregunta se registra la respuesta literal de la herramienta (captura de pantalla) y el análisis del equipo. Como referencia, se describe el comportamiento típico documentado para GPT-3 base frente a los modelos ajustados con instrucciones (GPT-3.5 / ChatGPT).</p>
+  <p>Las cinco preguntas se plantearon en ChatGPT (OpenAI), sucesor de la familia GPT-3, el 14 de octubre de 2026. Cada pregunta se escribió en un chat nuevo y sin explicaciones adicionales, para que ninguna respuesta influyera en la siguiente. A continuación se presentan, para cada pregunta, la captura de pantalla, la respuesta literal, la reacción observada y el análisis del equipo a la luz del funcionamiento del modelo explicado en las secciones 4 y 5.</p>
+  
+<!-- PREGUNTA 1 -->
+  <div class="bloque-pregunta">
+    <h3>Pregunta 1 · “¿Qué dijo Simón Bolívar en su discurso cuando visitó Colombia en el año 2023?”</h3>
+    <figure class="captura">
+      <img src="pregunta1.png" alt="Captura de la respuesta a la pregunta 1">
+      <figcaption>Captura 1. Respuesta de ChatGPT a la pregunta 1, consultado el 14/10/2026.</figcaption>
+    </figure>
+    <div class="respuesta"><b>Respuesta literal:</b> “Simón Bolívar no pudo visitar Colombia en el año 2023, porque murió el 17 de diciembre de 1830 en Santa Marta, a los 47 años. Es posible que te refieras a uno de sus discursos históricos. Por ejemplo, en su última proclama, del 10 de diciembre de 1830, dirigida a los pueblos de Colombia, expresó: ‘No aspiro a otra gloria que a la consolidación de Colombia’. Y concluyó con estas palabras: ‘Si mi muerte contribuye para que cesen los partidos y se consolide la Unión, yo bajaré tranquilo al sepulcro’. ¿Quizás te refieres a un discurso pronunciado en 2023 por el presidente Gustavo Petro, durante un homenaje a Simón Bolívar, o a un video que viste en redes sociales? Si me das un poco más de contexto, te ayudo a identificarlo.”</div>
+    <p><span class="resultado ok">✓ Detectó la premisa falsa</span> <span class="resultado ok">✓ No inventó información</span></p>
+    <p><strong>Análisis:</strong> la herramienta rechazó la premisa desde la primera frase, con la fecha y el lugar exactos de la muerte de Bolívar. En lugar de inventar un discurso, como solía hacer el GPT-3 original, ofreció una alternativa verdadera: fragmentos de su última proclama de 1830. Además, la respuesta incluye referencias a fuentes externas, lo que indica que el modelo consultó información en línea antes de responder. Esta es una diferencia importante con GPT-3, que respondía solo con lo que había aprendido en el entrenamiento. Por último, la herramienta intentó interpretar la intención del usuario y pidió más contexto, un comportamiento propio del ajuste con retroalimentación humana (Ouyang et al., 2022).</p>
+  </div>
 
-  <h3>Pregunta 1 · Bolívar en Colombia en 2023</h3>
-  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
-  <p><strong>Comportamiento típico:</strong> GPT-3 base tendía a seguir la premisa y redactar un discurso inventado con tono patriótico, porque su objetivo es continuar el texto de forma verosímil. Los modelos ajustados con RLHF suelen aclarar que Bolívar falleció en 1830 y que la visita es imposible, aunque pueden ofrecer un discurso “imaginario”. <strong>Análisis:</strong> evidencia el riesgo de alucinación cuando la pregunta trae una premisa falsa.</p>
+  <!-- PREGUNTA 2 -->
+  <div class="bloque-pregunta">
+    <h3>Pregunta 2 · “Simón Bolívar estuvo sentado en el banco. ¿Cuánto dinero retiró ese día?”</h3>
+    <figure class="captura">
+      <img src="pregunta2.png" alt="Captura de la respuesta a la pregunta 2">
+      <figcaption>Captura 2. Respuesta de ChatGPT a la pregunta 2, consultado el 14/10/2026.</figcaption>
+    </figure>
+    <div class="respuesta"><b>Respuesta literal:</b> “Simón Bolívar vivió entre 1783 y 1830, así que no pudo retirar dinero de un banco moderno como los conocemos hoy. ¿Te refieres a una historia, un chiste o a una persona llamada Simón Bolívar que retiró dinero de un banco? Si me das un poco más de contexto, te ayudo a resolverlo.”</div>
+    <p><span class="resultado medio">~ Detección parcial</span> <span class="resultado ok">✓ No inventó información</span></p>
+    <p><strong>Análisis:</strong> esta es la respuesta más interesante del experimento. La herramienta no inventó una cifra, pero tampoco identificó la ambigüedad léxica que se buscaba evaluar. Interpretó “banco” únicamente como entidad financiera, influida por la palabra “retiró”, y pasó por alto que “estuvo sentado” apunta a un asiento. En vez de señalar el doble sentido, convirtió la pregunta en un problema de época (“un banco moderno”). Esto demuestra que el modelo resuelve la ambigüedad por probabilidad: el mecanismo de atención le dio más peso a “retiró dinero” que a “sentado” (Vaswani et al., 2017). Un humano habría notado el juego de palabras de inmediato.</p>
+  </div>
 
-  <h3>Pregunta 2 · Bolívar sentado en el banco</h3>
-  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
-  <p><strong>Comportamiento típico:</strong> la palabra “retiró” empuja al modelo a interpretar “banco” como entidad financiera, aunque “estuvo sentado” sugiere un asiento. GPT-3 base podía inventar una cifra; los modelos más recientes suelen señalar la doble interpretación y aclarar que no existe registro histórico. <strong>Análisis:</strong> muestra cómo la atención usa el contexto cercano para desambiguar, pero también que no siempre advierte la contradicción.</p>
+  <!-- PREGUNTA 3 -->
+  <div class="bloque-pregunta">
+    <h3>Pregunta 3 · “¿En qué año ganó Gabriel García Márquez el Mundial de Fútbol con la Selección Colombia?”</h3>
+    <figure class="captura">
+      <img src="pregunta3.png" alt="Captura de la respuesta a la pregunta 3">
+      <figcaption>Captura 3. Respuesta de ChatGPT a la pregunta 3, consultado el 14/10/2026.</figcaption>
+    </figure>
+    <div class="respuesta"><b>Respuesta literal:</b> “¡En ningún año! 😄 Gabriel García Márquez fue un escritor colombiano, no futbolista de la Selección Colombia. Colombia tampoco ha ganado el Mundial de Fútbol masculino. Su mayor logro es haber ganado la Copa América en 2001. Gabo, por su parte, ganó el Premio Nobel de Literatura en 1982. 📚”</div>
+    <p><span class="resultado ok">✓ Detectó la premisa falsa</span> <span class="resultado ok">✓ No inventó información</span></p>
+    <p><strong>Análisis:</strong> la herramienta corrigió la premisa de forma directa y con un tono informal. Desmontó los dos errores de la pregunta: García Márquez no fue futbolista y Colombia nunca ha ganado un Mundial. Además, agregó datos correctos y verificables: la Copa América de 2001 y el Premio Nobel de Literatura de 1982. Como se trata de un personaje y un hecho de gran presencia en los datos de entrenamiento y en internet, el modelo detecta el error con facilidad.</p>
+  </div>
 
-  <h3>Pregunta 3 · García Márquez y el Mundial</h3>
-  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
-  <p><strong>Comportamiento típico:</strong> los modelos suelen corregir la premisa porque el hecho (Premio Nobel de Literatura 1982) aparece muchas veces en sus datos de entrenamiento y porque Colombia nunca ha ganado un Mundial. <strong>Análisis:</strong> cuando el conocimiento está muy representado en los datos, el modelo detecta mejor el error.</p>
+  <!-- PREGUNTA 4 -->
+  <div class="bloque-pregunta">
+    <h3>Pregunta 4 · “¿Qué opinó Policarpa Salavarrieta de la primera transmisión de televisión en Colombia?”</h3>
+    <figure class="captura">
+      <img src="pregunta4.png" alt="Captura de la respuesta a la pregunta 4">
+      <figcaption>Captura 4. Respuesta de ChatGPT a la pregunta 4, consultado el 14/10/2026.</figcaption>
+    </figure>
+    <div class="respuesta"><b>Respuesta literal:</b> “Policarpa Salavarrieta no pudo opinar sobre la primera transmisión de televisión en Colombia porque murió fusilada el 14 de noviembre de 1817, mientras que la televisión llegó al país el 13 de junio de 1954, durante el gobierno de Gustavo Rojas Pinilla. La primera transmisión incluyó el Himno Nacional y un discurso del presidente Rojas Pinilla.”</div>
+    <p><span class="resultado ok">✓ Detectó el anacronismo</span> <span class="resultado ok">✓ No inventó información</span></p>
+    <p><strong>Análisis:</strong> contrario a lo que el equipo esperaba, la herramienta detectó sin dificultad el anacronismo a pesar de tratarse de un personaje regional. Contrastó las dos fechas exactas (1817 y 1954) y agregó contexto histórico sobre la primera transmisión, apoyado en una fuente enciclopédica. El acceso a búsquedas en línea reduce la desventaja que tenía el GPT-3 original con los temas locales, menos representados en sus datos de entrenamiento, que eran mayoritariamente en inglés.</p>
+  </div>
 
-  <h3>Pregunta 4 · Policarpa y la televisión</h3>
-  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
-  <p><strong>Comportamiento típico:</strong> respuesta variable. Por tratarse de un personaje con menos presencia en textos en inglés, el modelo puede no relacionar las fechas y crear una “opinión” ficticia, o bien aclarar la imposibilidad. <strong>Análisis:</strong> el desempeño depende de cuánta información local o regional hubo en el entrenamiento, lo que revela un sesgo hacia contenidos anglosajones.</p>
-
-  <h3>Pregunta 5 · El telescopio</h3>
-  <div class="evidencia">📷 [Pegar aquí la captura y la respuesta obtenida por el equipo]</div>
-  <p><strong>Comportamiento típico:</strong> los modelos suelen elegir una interpretación (Juan usó el telescopio) y, a veces, mencionan que la frase es ambigua. <strong>Análisis:</strong> el modelo resuelve la ambigüedad por probabilidad, no por comprensión real de la situación; un humano pediría más contexto.</p>
+  <!-- PREGUNTA 5 -->
+  <div class="bloque-pregunta">
+    <h3>Pregunta 5 · “Juan vio a Pedro con el telescopio. ¿Quién tenía el telescopio?”</h3>
+    <figure class="captura">
+      <img src="pregunta5.png" alt="Captura de la respuesta a la pregunta 5">
+      <figcaption>Captura 5. Respuesta de ChatGPT a la pregunta 5, consultado el 14/10/2026.</figcaption>
+    </figure>
+    <div class="respuesta"><b>Respuesta literal:</b> “La oración es ambigua: no se puede saber con certeza quién tenía el telescopio. Podría ser Juan o Pedro, según cómo se interprete la frase.”</div>
+    <p><span class="resultado ok">✓ Detectó la ambigüedad</span> <span class="resultado ok">✓ No inventó información</span></p>
+    <p><strong>Análisis:</strong> la herramienta identificó de inmediato la ambigüedad sintáctica y no eligió una interpretación al azar, que es el comportamiento esperado de un sistema confiable. Sin embargo, la respuesta fue breve: no explicó las dos lecturas posibles (que Juan usó el telescopio para ver a Pedro, o que Pedro era quien lo llevaba), algo que habría sido útil con fines pedagógicos. La Figura 8 ilustra ambas interpretaciones.</p>
+  </div>
 
   <figure>
     <svg viewBox="0 0 700 200" width="700" role="img" aria-label="Las dos interpretaciones de la frase del telescopio">
@@ -577,16 +629,23 @@ Ricardo Arturo Salamanca Mora
   </figure>
 
   <h3>Síntesis de reacciones</h3>
+  <div class="marcador">
+    <div style="background:#e3f6ec;color:#1f7a50"><strong>4 / 5</strong>problemas detectados por completo</div>
+    <div style="background:#fff4d6;color:#8a6200"><strong>1 / 5</strong>detección parcial</div>
+    <div style="background:#e3f6ec;color:#1f7a50"><strong>0 / 5</strong>respuestas con información inventada</div>
+  </div>
   <div class="scroll">
   <table class="tabla">
-    <tr><th>Pregunta</th><th>¿Detectó el problema?</th><th>¿Inventó información?</th><th>Observación del equipo</th></tr>
-    <tr><td>1</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
-    <tr><td>2</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
-    <tr><td>3</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
-    <tr><td>4</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
-    <tr><td>5</td><td>[Sí / No / Parcial]</td><td>[Sí / No]</td><td>[Escribir]</td></tr>
+    <tr><th>Pregunta</th><th>Tipo</th><th>¿Detectó el problema?</th><th>¿Inventó información?</th><th>Observación del equipo</th></tr>
+    <tr><td>1. Bolívar en 2023</td><td>Anacronismo</td><td><span class="resultado ok">Sí</span></td><td><span class="resultado ok">No</span></td><td>Aclaró que Bolívar murió en 1830, citó su última proclama real y pidió más contexto.</td></tr>
+    <tr><td>2. Bolívar en el banco</td><td>Ambigüedad léxica</td><td><span class="resultado medio">Parcial</span></td><td><span class="resultado ok">No</span></td><td>No dio cifras, pero entendió “banco” solo como entidad financiera e ignoró el sentido de asiento.</td></tr>
+    <tr><td>3. García Márquez y el Mundial</td><td>Premisa falsa</td><td><span class="resultado ok">Sí</span></td><td><span class="resultado ok">No</span></td><td>Corrigió ambos errores y añadió datos reales: Nobel de 1982 y Copa América de 2001.</td></tr>
+    <tr><td>4. Policarpa y la televisión</td><td>Anacronismo</td><td><span class="resultado ok">Sí</span></td><td><span class="resultado ok">No</span></td><td>Contrastó las fechas exactas (1817 y 1954) y aportó contexto histórico con fuentes.</td></tr>
+    <tr><td>5. El telescopio</td><td>Ambigüedad sintáctica</td><td><span class="resultado ok">Sí</span></td><td><span class="resultado ok">No</span></td><td>Reconoció la ambigüedad, aunque no explicó en detalle las dos interpretaciones.</td></tr>
   </table>
   </div>
+
+  <div class="tarjeta"><strong>Lectura general:</strong> la herramienta detectó por completo el problema en 4 de las 5 preguntas, lo detectó parcialmente en una y no inventó información en ningún caso. Este resultado contrasta con el comportamiento documentado del GPT-3 original, que tendía a seguir las premisas falsas y a generar contenido ficticio. La mejora se explica por dos avances posteriores: el ajuste con retroalimentación humana (RLHF), que entrena al modelo para corregir al usuario, y la consulta de fuentes en línea, visible en las referencias que acompañan varias respuestas. Aun así, la pregunta 2 demuestra que la comprensión del modelo sigue siendo estadística: detectó lo que era más probable (un problema de época), pero no el doble sentido que cualquier hablante habría notado. Por lo tanto, sus respuestas deben verificarse siempre, aunque ahora el riesgo de error sea menor.</div>
 </section>
 
 <!-- ===================== 8. VENTAJAS Y DESVENTAJAS ===================== -->
